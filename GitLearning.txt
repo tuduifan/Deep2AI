@@ -1,4 +1,4 @@
-1.GIT学习  
+1.时光机穿梭  
 $ mkdir learngit  
 $ cd learngit  
 $ pwd  
@@ -12,5 +12,30 @@ $ 回退历史版本 git reset --hard HEAD^ （HEAD当前版本，HEAD^上一版
 $ cat readme.txt  
 $ git reset --hard 1094a（如果被回退的版本的版本号commit id还能在命令行窗口中找到就用版本号回退，版本号可用前几位）  
 $ git reflog 记录了每一次的commit id可用于回退任何版本）  
-版本库中的隐藏目录.git下有stage（暂存区）和master。（工作区、暂存区、master）  
-$ git push 推到Github仓库  
+版本库中的隐藏目录.git下有stage（暂存区）和master。（工作区、暂存区、版本库）    
+$ git checkout -- readme.txt 丢弃工作区或暂存区的修改  
+$ git rm test.txt 删除文件  
+
+2.分支管理
+$ git checkout -b dev 创建并切换,相当于git branch dev 创建，git checkout dev 切换    
+$ git branch 不加名称，列出所有分支  
+$ git checkout master 回到master分支，发现刚修改的readme.txt没变化，因为那个提交在了dev分支上  
+$ git merge dev 把dev分支的工作成果合并到master分支，默认的Fast forward模式 
+$ git branch -d dev 删除dev分支  
+新的更科学的命令  
+$ git switch -c dev 创建并切换  
+$ git log --graph 可以看到分支合并图，q键退出
+$ git merge --no-ff dev合并分支时，表示不使用Fast forward模式，历史记录中有分支dev，能看出来曾经做过合并，而Fast forward合并就看不出来曾经做过合并
+$ git merge --no-ff -m "merge with no-ff" dev 相当于两个命令 git merge --no-ff --no-commit dev 和 git commit -m "merge with no-ff"
+master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活，每个人在自己分支上干活，需要合并时合并
+$ git stash用于储存当前的工作现场，再用git status查看工作区就是clean的
+$ git stash apply 将最近一次（或指定）的 stash 内容恢复到工作区，这样就可以多次 apply 同一个 stash，或者稍后手动用 git stash drop 删除它
+$ git stash pop 将 stash 内容恢复到工作区，同时从 stash 栈中删除该条记录，相当于 git stash apply + git stash drop 两步
+$ git stash list 查看储存的stash
+$ git cherry-pick 4c805e2 复制一个特定的提交到当前分支
+$ 开发一个新功能，最好新建一个分支。如果要丢弃一个没有被合并过的分支，可以通过git branch -D <name>强行删除
+$ git push origin        # 推送当前分支到 origin 的相同分支名
+$ git push origin main   # 推送本地 main 分支到 origin 的 main 分支
+多人协作时，大家都会往master和dev分支上推送各自的修改，当你的小伙伴从远程库clone时，默认情况下，你的小伙伴只能看到本地的master分支。
+$ git checkout -b dev origin/dev。现在，你的小伙伴要在dev分支上开发，就必须创建远程origin的dev分支到本地，于是他用这个命令创建本地dev分支。
+需要解释为什么需要指定origin/dev作为起点，而不是仅仅用-b dev。重点在于，如果不指定起点，git checkout -b dev会基于当前HEAD（当前分支）创建分支，而不是基于远程的dev分支。而当前HEAD通常指向master，这样创建的dev分支会基于master而不是基于远程的dev，可能导致不一致。所以要指定origin/dev来确保本地dev与远程dev同步。
