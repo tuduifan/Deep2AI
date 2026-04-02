@@ -39,3 +39,16 @@ $ git push origin main   # 推送本地 main 分支到 origin 的 main 分支
 多人协作时，大家都会往master和dev分支上推送各自的修改，当你的小伙伴从远程库clone时，默认情况下，你的小伙伴只能看到本地的master分支。
 $ git checkout -b dev origin/dev。现在，你的小伙伴要在dev分支上开发，就必须创建远程origin的dev分支到本地，于是他用这个命令创建本地dev分支。
 需要解释为什么需要指定origin/dev作为起点，而不是仅仅用-b dev。重点在于，如果不指定起点，git checkout -b dev会基于当前HEAD（当前分支）创建分支，而不是基于远程的dev分支。而当前HEAD通常指向master，这样创建的dev分支会基于master而不是基于远程的dev，可能导致不一致。所以要指定origin/dev来确保本地dev与远程dev同步。
+
+3.标签管理
+$ git tag v1.0 打标签，默认给最新一次commit打标签
+$ git tag 查看所有标签
+$ git log --pretty=oneline --abbrev-commit 可以查看每次commit的id。--pretty=oneline：将每个提交压缩为一行显示，格式为 <完整哈希值> <提交信息>。--abbrev-commit：将哈希值缩写为简短形式（通常是前 7-10 位），而不是完整的 40 位
+$ git tag v0.9 f52c633 给某特定commit打标签
+$ git tag -a v0.1 -m "version 0.1 released" 1094adb 创建带说明的标签
+$ git show <tagname> 查看标签详细信息
+$ git push origin <tagname>可以推送一个本地标签；
+$ git push origin --tags可以推送全部未推送过的本地标签；
+$ git tag -d <tagname>可以删除一个本地标签；
+$ git push origin :refs/tags/<tagname>可以删除一个远程标签。
+如何参与一个开源项目呢？比如人气极高的bootstrap项目，这是一个非常强大的CSS框架，你可以访问它的项目主页https://github.com/twbs/bootstrap，点“Fork”就在自己的账号下克隆了一个bootstrap仓库，然后，从自己的账号下clone：git clone git@github.com:michaelliao/bootstrap.git.一定要从自己的账号下clone仓库，这样你才能推送修改。如果从bootstrap的作者的仓库地址git@github.com:twbs/bootstrap.git克隆，因为没有权限，你将不能推送修改。
