@@ -1,0 +1,54 @@
+1.时光机穿梭  
+$ mkdir learngit  
+$ cd learngit  
+$ pwd  
+$ git init  
+$ git add readme.txt 新建文件或者修改或者删除等操作后都用add提交当前的readme.txt文件到暂存区，add是提交到暂存区的操作不是建文件的意思  
+$ git commit -m "wrote a readme file"  
+$ git status  
+$ 内容差异 git diff 或者看某个文件： git diff readme.txt  
+$ 历史记录 git log  或输出更简洁的: $ git log --pretty=oneline  
+$ 回退历史版本 git reset --hard HEAD^ （HEAD当前版本，HEAD^上一版本，HEAD^^上上版本，HEAD~100上100版）  
+$ cat readme.txt  
+$ git reset --hard 1094a（如果被回退的版本的版本号commit id还能在命令行窗口中找到就用版本号回退，版本号可用前几位）  
+$ git reflog 记录了每一次的commit id可用于回退任何版本）  
+版本库中的隐藏目录.git下有stage（暂存区）和master。（工作区、暂存区、版本库）    
+$ git checkout -- readme.txt 丢弃工作区或暂存区的修改  
+$ git rm test.txt 删除文件  
+
+2.分支管理
+$ git checkout -b dev 创建并切换,相当于git branch dev 创建，git checkout dev 切换    
+$ git branch 不加名称，列出所有分支  
+$ git checkout master 回到master分支，发现刚修改的readme.txt没变化，因为那个提交在了dev分支上  
+$ git merge dev 把dev分支的工作成果合并到master分支，默认的Fast forward模式 
+$ git branch -d dev 删除dev分支  
+新的更科学的命令  
+$ git switch -c dev 创建并切换  
+$ git log --graph 可以看到分支合并图，q键退出
+$ git merge --no-ff dev合并分支时，表示不使用Fast forward模式，历史记录中有分支dev，能看出来曾经做过合并，而Fast forward合并就看不出来曾经做过合并
+$ git merge --no-ff -m "merge with no-ff" dev 相当于两个命令 git merge --no-ff --no-commit dev 和 git commit -m "merge with no-ff"
+master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活，每个人在自己分支上干活，需要合并时合并
+$ git stash用于储存当前的工作现场，再用git status查看工作区就是clean的
+$ git stash apply 将最近一次（或指定）的 stash 内容恢复到工作区，这样就可以多次 apply 同一个 stash，或者稍后手动用 git stash drop 删除它
+$ git stash pop 将 stash 内容恢复到工作区，同时从 stash 栈中删除该条记录，相当于 git stash apply + git stash drop 两步
+$ git stash list 查看储存的stash
+$ git cherry-pick 4c805e2 复制一个特定的提交到当前分支
+$ 开发一个新功能，最好新建一个分支。如果要丢弃一个没有被合并过的分支，可以通过git branch -D <name>强行删除
+$ git push origin        # 推送当前分支到 origin 的相同分支名
+$ git push origin main   # 推送本地 main 分支到 origin 的 main 分支
+多人协作时，大家都会往master和dev分支上推送各自的修改，当你的小伙伴从远程库clone时，默认情况下，你的小伙伴只能看到本地的master分支。
+$ git checkout -b dev origin/dev。现在，你的小伙伴要在dev分支上开发，就必须创建远程origin的dev分支到本地，于是他用这个命令创建本地dev分支。
+需要解释为什么需要指定origin/dev作为起点，而不是仅仅用-b dev。重点在于，如果不指定起点，git checkout -b dev会基于当前HEAD（当前分支）创建分支，而不是基于远程的dev分支。而当前HEAD通常指向master，这样创建的dev分支会基于master而不是基于远程的dev，可能导致不一致。所以要指定origin/dev来确保本地dev与远程dev同步。
+
+3.标签管理
+$ git tag v1.0 打标签，默认给最新一次commit打标签
+$ git tag 查看所有标签
+$ git log --pretty=oneline --abbrev-commit 可以查看每次commit的id。--pretty=oneline：将每个提交压缩为一行显示，格式为 <完整哈希值> <提交信息>。--abbrev-commit：将哈希值缩写为简短形式（通常是前 7-10 位），而不是完整的 40 位
+$ git tag v0.9 f52c633 给某特定commit打标签
+$ git tag -a v0.1 -m "version 0.1 released" 1094adb 创建带说明的标签
+$ git show <tagname> 查看标签详细信息
+$ git push origin <tagname>可以推送一个本地标签；
+$ git push origin --tags可以推送全部未推送过的本地标签；
+$ git tag -d <tagname>可以删除一个本地标签；
+$ git push origin :refs/tags/<tagname>可以删除一个远程标签。
+如何参与一个开源项目呢？比如人气极高的bootstrap项目，这是一个非常强大的CSS框架，你可以访问它的项目主页https://github.com/twbs/bootstrap，点“Fork”就在自己的账号下克隆了一个bootstrap仓库，然后，从自己的账号下clone：git clone git@github.com:michaelliao/bootstrap.git.一定要从自己的账号下clone仓库，这样你才能推送修改。如果从bootstrap的作者的仓库地址git@github.com:twbs/bootstrap.git克隆，因为没有权限，你将不能推送修改。
